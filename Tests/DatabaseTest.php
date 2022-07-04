@@ -17,7 +17,7 @@ final class DatabaseTest extends TestCase
     {
         return [
             ["SELECT '{}'", [1.39], "SELECT '1.39'"],
-            ["SELECT {}", ["One quote characters shouldn't break the system"], "SELECT 'One quote characters shouldn\\'t break the system'"],
+            ["SELECT {}", ["One quote character shouldn't break the system"], "SELECT 'One quote character shouldn\\'t break the system'"],
             ["SELECT {}", ["Two quote characters ' shouldn't break the system"], "SELECT 'Two quote characters \\' shouldn\\'t break the system'"],
             ["SELECT {}", ["You can also spam them '''"], "SELECT 'You can also spam them \\'\\'\\''"],
             ["SELECT foo = {}", ["foo"]     , "SELECT foo = 'foo'"],
