@@ -1,29 +1,31 @@
 <?php
 
 use Clarity\Pipe\Pipe;
-use Clarity\Request\Request;
-use Clarity\Request\RequestInterface;
-use Clarity\Response\ResponseInterface;
-use Clarity\Route\Route;
-use Clarity\Router\Router;
 use PHPUnit\Framework\TestCase;
 
 final class PipeTest extends TestCase
 {
-    public function testPipe()
+    /**
+     * @dataProvider providerForTestPipe
+     */
+    public function testPipe($expectedOutput, $input)
     {
-        $myPipe = Pipe::new([
-            fn(RequestInterface $req) => $req->getSlug("number"),
-            fn($number) => $number * 5,
-            fn($number) => $number - 2
-        ]);
+        $p = Pipe::new(automaticalResponse:false)
+        ->append(fn($e)=>$e*5)
+        ->append(fn($e)=>$e/5)
+        ->append(fn($e)=>$e+10);
 
-        $myRoute = Route::new("/process/{number}", $myPipe);
+        $this->assertEquals($expectedOutput, $p($input));
+    }
 
-        $res = Router::callRouteCallback($myRoute, Request::new("GET", "/process/5"));
-
-        $this->assertInstanceOf(ResponseInterface::class, $res);
-        $this->assertEquals(23, $res->getContent());
-        $this->assertEquals("23", $res->getContent());
+    public function providerForTestPipe()
+    {
+        return [
+            [15, 05],
+            [13, 03],
+            [12, 02],
+            [5010, 5000],
+            [22.5, 12.5]
+        ];
     }
 }
